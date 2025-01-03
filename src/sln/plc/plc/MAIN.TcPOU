@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1">
+  <POU Name="MAIN" Id="{9afdc577-2fc8-49ca-8e8c-12e4c4a4e55c}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM MAIN
+VAR
+	fbRecipeTest_Valid              : FB_RecipeValidTest(sTestName:='Recipe Valid') := 
+										(bExpected:= TRUE);
+	fbRecipeTest_InvalidLoTemp      : FB_RecipeValidTest(sTestName:='Recipe Invalid Lo Temp') := 
+										(bExpected:= FALSE, 
+										MockRecipe:=(fTemperature:=139.9));
+	fbRecipeTest_InvalidHiTemp      : FB_RecipeValidTest(sTestName:='Recipe Invalid Hi Temp') := 
+										(bExpected:= FALSE,
+										MockRecipe:=(fTemperature:=185.1));
+	fbTestRunner                    : FB_TestRunner;
+	bInit                           : BOOL;								
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[// run once
+IF NOT bInit THEN
+    fbTestRunner.AddTest(fbRecipeTest_Valid);
+    fbTestRunner.AddTest(fbRecipeTest_InvalidLoTemp);
+    fbTestRunner.AddTest(fbRecipeTest_InvalidHiTemp);
+    bInit := TRUE;
+END_IF
+fbTestRunner.Execute();]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

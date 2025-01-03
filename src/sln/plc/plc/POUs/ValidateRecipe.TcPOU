@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1">
+  <POU Name="ValidateRecipe" Id="{b9c75b31-6db9-4b3f-98f2-45cfcdf1d9cd}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION ValidateRecipe : Bool
+VAR_INPUT
+	Recipe          : REFERENCE TO RecipeData;
+END_VAR
+VAR
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[ValidateRecipe :=
+    (Recipe.fTemperature >= 140.0 AND Recipe.fTemperature <= 185.0) AND
+    (Recipe.nAgitatorSpeed >= 10 AND Recipe.nAgitatorSpeed <= 100) AND
+    (Recipe.nMixTimeSecs >= 300 AND Recipe.nMixTimeSecs <= 500); ]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1">
+  <POU Name="FB_RecipeValidTest" Id="{2e0c420b-37ef-45eb-953f-121beb567dcd}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_RecipeValidTest EXTENDS FB_SimpleTest
+VAR_INPUT
+	bExpected       : BOOL;
+	MockRecipe      : RecipeData := (
+                        fTemperature:=140.0, 
+                        nAgitatorSpeed:=10, 
+                        nMixTimeSecs:=300
+                    );
+END_VAR
+VAR_OUTPUT
+END_VAR
+VAR
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Method Name="Execute" Id="{05c0cad9-632b-437a-a4ec-6b3d58402842}">
+      <Declaration><![CDATA[METHOD Execute : BOOL
+VAR_INPUT
+END_VAR
+VAR_INST
+	bResult		: BOOL;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[bResult := ValidateRecipe(MockRecipe);
+AssertEquals(bExpected, bResult, 'Recipe validation failed');
+Execute := TRUE;]]></ST>
+      </Implementation>
+    </Method>
+  </POU>
+</TcPlcObject>

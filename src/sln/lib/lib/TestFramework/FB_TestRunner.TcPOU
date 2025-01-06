@@ -49,7 +49,8 @@ END_VAR
 		ToXml();
 		nState := 2;
 	2:
-		IF fbFileIo.WriteAllText('/testresults.xml', sXmlString) THEN
+		// default write to root folder of the runtime (C:\ProgramData\Beckhoff\TwinCAT\3.1\Runtimes\UmRtTestFramework) 
+		IF fbFileIo.WriteAllText('testresults.xml', sXmlString) THEN
 			nState := 3;
 		END_IF
 	3:

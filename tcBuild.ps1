@@ -86,14 +86,11 @@ AddMessageFilterClass('') # Call function
 $progID = "TcXaeShell.DTE.17.0" # XaeShell64 COM ProgId
 $SuppressUI = $false
 $logFile = "$pwd\_ScriptLogs\logfile.txt"
-$slnPath = "$pwd\src\sln\lib.sln"
-$projName = "lib"
-$plcProjName = "lib Project"
-$libName = "lib"
-$major = 0
-$minor = 0
-$patch = 0
-$buildNumber = 2
+$slnPath = "$pwd\src\sln\lab.sln"
+$projName = "plc"
+$plcProjName = "plc Project"
+$UmRtNetId = "192.168.4.1.1.1"
+$UmRtTestFramework = "UmRtTestFramework"
 
 # Start logging
 Start-Transcript -Path $logFile -Append
@@ -105,8 +102,33 @@ Start-Transcript -Path $logFile -Append
 #}
 
 try {
-    Log "Create VisualStudio COM interface"# Define the ProgID for the Visual Studio DTE object
-    
+    $projectPath = Get-Location
+    # set up the test environment UM runtime 
+    #  * delete any existing test environment UM runtime
+    #  * create the test environment UM runtime by copying the default UM runtime
+    #  * execute the UM runtime with 'project' parameters so it fits the project references
+    # Try to remove the folder if it exists
+    $destinationFolder = "C:\ProgramData\Beckhoff\TwinCAT\3.1\Runtimes\" + $UmRtTestFramework
+    if ((Test-Path -Path $destinationFolder)) {
+        Remove-Item -Path $destinationFolder -Recurse -Force
+    }
+        # Copy the folder if it doesn't exist
+    if (-Not (Test-Path -Path $destinationFolder)) {
+        Log "UmRtNetId_TestFramework folder was removed"
+        Log "Copying UmRtNetId_Default to UmRtTestFramework"
+        Copy-Item -Path "C:\ProgramData\Beckhoff\TwinCAT\3.1\Runtimes\UmRt_Default" -Destination $destinationFolder -Recurse
+    }
+    else {
+        Log "UmRtNetId_TestFramework folder was not removed"
+    }
+    Set-Location -Path $destinationFolder
+    $env:TC_INST_NAME = $UmRtTestFramework
+    $command = $env:TWINCAT3DIR+"Runtimes\bin\TcSystemServiceUm.exe"
+    Log "Start UmRtTestFramework"
+    Start-Process $command -ArgumentList "-t bin -i $UmRtNetId -n $env:TC_INST_NAME -c .\3.1" -WindowStyle Minimized
+
+    Set-Location -Path $projectPath
+    Log "Create VisualStudio COM interface"# Define the ProgID for the Visual Studio DTE object    
     # Attempt to get the COM type
     $dteType = [type]::GetTypeFromProgID($progID)
     
@@ -134,13 +156,14 @@ try {
     Log "Open solution $slnPath"
     $sln = $dte.Solution
     $sln.Open($slnPath)
-
+    # open system manager for plc project
     # Listing projects in solution, selecting $projName if found
     Log "Listing projects in solution, selecting $projName if found"
     foreach ($proj in $sln.Projects) {
         Log $proj.Name
         if ($proj.Name -eq $projName) {
             $project = $proj
+            break
         }
     }
     if ($project) {
@@ -152,21 +175,10 @@ try {
     } else {
         Log "ERROR: Project $projName not found" -ForegroundColor Red
     }    
-
-    # Selecting plc project: $projName\$plcProjName
-    Log "Selecting plc project: $projName\$plcProjName"
-    $plcProject = $systemManager.LookupTreeItem("TIPC^$projName^$plcProjName")
-    #Log $plcProject
-    $plcProjectFGetTitle = $systemManager.LookupTreeItem("TIPC^$projName^$plcProjName^Project Information^F_GetTitle")
-    if ($plcProjectFGetTitle) {
-        $ImplementationText = $plcProjectFGetTitle.ImplementationText
-        $match = $ImplementationText -match '".*?"'  # Match the text between quotes
-        $libName = $matches[0] -replace '"', ''  # Remove the quotes
-    }
-
-    # Building library
-    Log "Building library"
-    $plcProject.SaveAsLibrary("$pwd\$libName.library", $libInstall);
+    #$plcProj = $systemManager.LookupTreeItem("TIPC^$projName^$plcProjName")
+    $systemManager.SetTargetNetId($UmRtNetId)
+    $systemManager.ActivateConfiguration()
+    $systemManager.StartRestartTwinCAT() 
 	}
 catch {
     # Handle the error    

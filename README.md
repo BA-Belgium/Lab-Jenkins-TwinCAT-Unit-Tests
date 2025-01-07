@@ -5,7 +5,8 @@ Branched from https://github.com/bstiffler582/NEM_2024_SDT.git
 LAB home: https://github.com/BA-Belgium/Lab-Jenkins-TwinCAT-Unit-Tests
  
 !REMARK: This lab can only be used with TwinCAT 3.1.4026 since it makes use of a User Mode runtime for the test framework.
-!REMARK: The necessary licenses for the framwork test must be available in the user mode runtime. The user mode runtime itself is set up by the deployment script.
+
+!REMARK: The necessary licenses for the framework test must be available in the **UmRt_Default** runtime. The user mode runtime itself is set up by the deployment script.
 
 ### Contents
 

@@ -89,6 +89,7 @@ $logFile = "$pwd\_ScriptLogs\logfile.txt"
 $slnPath = "$pwd\src\sln\lab.sln"
 $projName = "plc"
 $plcProjName = "plc Project"
+$UmRtProcessName = "TcSystemServiceUm"  # Replace with the process you want to check
 $UmRtNetId = "192.168.4.1.1.1"
 $UmRtTestFramework = "UmRtTestFramework"
 
@@ -100,6 +101,18 @@ Start-Transcript -Path $logFile -Append
 #    Log "Removing existing target directory"
 #    Remove-Item -Recurse -Force $targetDir
 #}
+
+
+# Check if the Um Rt process is running
+$process = Get-Process -Name $UmRtProcessName -ErrorAction SilentlyContinue
+
+if ($process) {
+    # Process found, so kill it
+    Stop-Process -Name $UmRtProcessName -Force
+    Write-Host "$UmRtProcessName has been killed."
+} else {
+    Write-Host "$UmRtProcessName is not running."
+}
 
 try {
     $projectPath = Get-Location
@@ -125,7 +138,8 @@ try {
     $env:TC_INST_NAME = $UmRtTestFramework
     $command = $env:TWINCAT3DIR+"Runtimes\bin\TcSystemServiceUm.exe"
     Log "Start UmRtTestFramework"
-    Start-Process $command -ArgumentList "-t bin -i $UmRtNetId -n $env:TC_INST_NAME -c .\3.1" -WindowStyle Minimized
+    #Start-Process $command -ArgumentList "-t bin -i $UmRtNetId -n $env:TC_INST_NAME -c .\3.1" -WindowStyle Minimized
+    Start-Process $command -ArgumentList "-t bin -i $UmRtNetId -n $UmRtTestFramework -c .\3.1" -WindowStyle Minimized
 
     Set-Location -Path $projectPath
     Log "Create VisualStudio COM interface"# Define the ProgID for the Visual Studio DTE object    
@@ -179,6 +193,12 @@ try {
     $systemManager.SetTargetNetId($UmRtNetId)
     $systemManager.ActivateConfiguration()
     $systemManager.StartRestartTwinCAT() 
+
+    # Give the TwinCAT test framework some time to produce the results
+    Sleep(5)
+    Log "Moving test results"
+    Move-Item -Path $destinationFolder\testresults.xml -Destination $pwd\_TestResults\testresults.xml
+
 	}
 catch {
     # Handle the error    

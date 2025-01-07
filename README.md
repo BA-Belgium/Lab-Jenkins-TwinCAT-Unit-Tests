@@ -142,13 +142,14 @@ IF NOT bInit THEN
 END_IF
 fbTestRunner.Execute();
 ```
-The test runner will handle calling the `Execute` method of our test blocks, and saving off all the results to an XML file on the root of our local machine as `\testresults.xml`. Feel free to modify the mock data or expected values to force a test failure.
+The test runner will handle calling the `Execute` method of our test blocks, and saving off all the results to an XML file on the root the runtime as `testresults.xml`. Feel free to modify the mock data or expected values to force a test failure.
 
 > Be sure to read in the runtime configuration and set appropriately for your local target.
 
 Finally to tie everything together:
 - Modify the build script
-    - Activate configuration and run
+    - Activate configuration onto a target, in the repository script a UM runtime is created and used
+    - run the test framework (a minimalistic script is printed below, see the full script in the repository)
     - Copy the test results output to Jenkins workspace
 ```ps
 $dte = new-object -com "TcXaeShell.DTE.17.0" # XaeShell64 COM ProgId

@@ -61,6 +61,7 @@ _ModuleInstall/
 _Deployment/
 _Repository/
 _ScriptLogs/
+_TestResults/
 
 ### TwinCAT3.OpenFrameworks Stack ###
 OpenFrameworks.gitignore

@@ -49,7 +49,7 @@ END_VAR
 		ToXml();
 		nState := 2;
 	2:
-		IF fbFileIo.WriteAllText('/testresults.xml', sXmlString) THEN
+		IF fbFileIo.WriteAllText('testresults.xml', sXmlString) THEN
 			nState := 3;
 		END_IF
 	3:

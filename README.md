@@ -1,4 +1,4 @@
-## Automated Test Pipeline Lab
+## Automated Test Pipeline with Jenkins Lab 
 
 Branched from https://github.com/bstiffler582/NEM_2024_SDT.git
 

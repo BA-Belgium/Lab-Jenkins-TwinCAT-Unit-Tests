@@ -92,6 +92,7 @@ $plcProjName = "plc Project"
 $UmRtProcessName = "TcSystemServiceUm"  # Replace with the process you want to check
 $UmRtNetId = "192.168.4.1.1.1"
 $UmRtTestFramework = "UmRtTestFramework"
+$testResultPath = "$pwd\_TestResults"
 
 # Start logging
 Start-Transcript -Path $logFile -Append
@@ -196,9 +197,16 @@ try {
 
     # Give the TwinCAT test framework some time to produce the results
     Sleep(5)
+    # Check if the folder exists
+    if (-not (Test-Path -Path $testResultPath)) {
+        # Folder doesn't exist, create it
+        New-Item -Path $testResultPath -ItemType Directory
+        Write-Host "Folder created at $testResultPath"
+    } else {
+        Write-Host "Folder already exists at $testResultPath"
+    }
     Log "Moving test results"
-    Move-Item -Path $destinationFolder\testresults.xml -Destination $pwd\_TestResults\testresults.xml
-
+    Move-Item -Path $destinationFolder\testresults.xml -Destination $testResultPath\testresults.xml
 	}
 catch {
     # Handle the error    

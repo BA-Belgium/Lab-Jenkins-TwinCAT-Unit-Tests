@@ -10,8 +10,8 @@ VAR
 										MockRecipe:=(fTemperature:=139.9));
 	fbRecipeTest_InvalidHiTemp      : FB_RecipeValidTest(sTestName:='Recipe Invalid Hi Temp') := 
 										(bExpected:= FALSE,
-//										MockRecipe:=(fTemperature:=185.1)); // Result as expected
-										MockRecipe:=(fTemperature:=184.9)); // Result not as expected
+										MockRecipe:=(fTemperature:=185.1)); // Result as expected
+//										MockRecipe:=(fTemperature:=184.9)); // Result not as expected
 	fbTestRunner                    : FB_TestRunner;
 	bInit                           : BOOL;								
 END_VAR
@@ -24,7 +24,8 @@ IF NOT bInit THEN
     fbTestRunner.AddTest(fbRecipeTest_InvalidHiTemp);
     bInit := TRUE;
 END_IF
-fbTestRunner.Execute();]]></ST>
+fbTestRunner.Execute();
+]]></ST>
     </Implementation>
   </POU>
 </TcPlcObject>
